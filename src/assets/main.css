@@ -1,35 +1,54 @@
 @import './base.css';
 
 #app {
-  max-width: 1280px;
+  max-width: 500px;
   margin: 0 auto;
-  padding: 2rem;
   font-weight: normal;
-}
-
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
 }
 
 @media (hover: hover) {
   a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
+    padding: 0.15rem 0.5rem;
+    border-radius: 2px;
+    background-color: hsla(163, 7%, 19%, 0.2);
   }
 }
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
+a,
+.listHeading {
+  font-weight: bold;
+  text-decoration: none;
+  color: black;
+  cursor: pointer;
+}
 
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
+ul {
+  margin-top: 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.listDiv {
+  font-size: larger;
+  padding: 0.8rem 0;
+  margin: 2rem;
+  background-color: #FFFDD1;
+  box-shadow: 5px 5px 10px lightgray;
+}
+
+.singleItem {
+  display: flex;
+  justify-content: space-between;
+  text-align: start;
+  margin: 0.25rem 1.5rem;
+}
+
+.checkbx {
+  margin-right: 0.25rem;
+}
+
+.itemValue {
+  background-color: hsla(163, 7%, 19%, 0.2);
+  padding: 0 0.25rem;
+  border-radius: 0.25rem;
 }
