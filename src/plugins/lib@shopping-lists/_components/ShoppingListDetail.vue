@@ -1,6 +1,4 @@
 <template>
-    <a href="#"><h1>My Lists</h1></a>
-
     <div v-if="shoppingList" class="listDiv">
         <h1 class="listHeading">{{ shoppingList.title }}</h1>
         <ul>
@@ -14,9 +12,9 @@
                     </div>
                     <span class="itemValue">{{item.value}} {{item.unit}}</span>
                 </div>
-                
             </li>
         </ul>
+        <input class="txtInput" type="text" placeholder="new item..">
     </div>
 </template>
 
@@ -45,3 +43,12 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+    .txtInput {
+        background-color: #FFFDD1;
+        border: none;
+        position: relative;
+        right: 100px;
+    }
+</style>

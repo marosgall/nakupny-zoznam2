@@ -1,6 +1,24 @@
 <template>
-	<router-view></router-view>
+	<div id="app">
+		<header>
+			<TheNavigation />
+		</header>
+
+		<main class="content">
+			<RouterView />
+		</main>
+	</div>
 </template>
+
+<script>
+  import TheNavigation from '/src/plugins/lib@shopping-lists/_components/TheNavigation.vue'
+
+  export default {
+		components: {
+			TheNavigation
+		}
+	}
+</script>
 
 <style>
 #app {

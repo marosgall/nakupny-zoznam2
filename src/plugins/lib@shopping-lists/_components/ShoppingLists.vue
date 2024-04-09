@@ -1,12 +1,10 @@
 <template>
-	<h1>My Lists</h1>
-
-	<template v-if="!shoppingLists">
-		<p>Načítavam dáta</p>
+    <template v-if="!shoppingLists">
+		<p>Loading...</p>
 	</template>
 
 	<template v-else-if="shoppingLists.error">
-		Pri načítaní dát nastala chyba: {{ shoppingLists.error }}
+		Error: {{ shoppingLists.error }}
 	</template>
 
 	<template v-else>
@@ -30,40 +28,39 @@
                 </li>
 			</ul>
 		</div>
-		<a >Add new list</a>
 	</template>
-	<shopping-list-detail></shopping-list-detail>
 </template>
 
 <script>
     import axios from 'axios'
-	
-export default {
-	data() {
-		return {
-			shoppingLists: null,
-			itemCount: 3
+
+    export default {
+        data() {
+			return {
+				shoppingLists: null,
+				itemCount: 3
+			}
+		},
+        async mounted() {
+			try {
+				const { data: { data: shoppingLists} } = await axios.get('https://shoppinglist.wezeo.dev/cms/api/v1/shopping-lists')
+				this.shoppingLists = shoppingLists
+                console.log(shoppingLists)
+			} catch (error) {
+				console.error('Error:', error)
+				this.shoppingLists = { error }
+			}
+		},
+		methods: {
+			openShoppingListDetail({ id }) {
+				this.$router.push({ name: 'Shopping List - Detail', params: { id } })
+			}
 		}
-	},
-	async mounted() {
-		try {
-			const { data: { data: shoppingLists} } = await axios.get('https://shoppinglist.wezeo.dev/cms/api/v1/shopping-lists')
-			this.shoppingLists = shoppingLists
-		} catch (error) {
-			console.error('Error:', error)
-			this.shoppingLists = { error }
-		}
-	},
-	methods: {
-		openShoppingListDetail({ id }) {
-			this.$router.push({ name: 'Shopping List - Detail', params: { id } })
-		}
-	}
-}
+    }
 </script>
 
 <style>
-	.item-checked {
+    .item-checked {
         text-decoration: none;
     }
 
