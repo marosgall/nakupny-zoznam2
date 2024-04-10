@@ -12,11 +12,6 @@ const routes = [
 		component: () => import('/src/plugins/lib@shopping-lists/_components/ShoppingListDetail.vue')
 	},
 	{
-		path: '/add-new-list',
-		name: 'Add new list',
-		component: () => import('/src/plugins/lib@shopping-lists/_components/AddNewList.vue')
-	},
-	{
 		path: '/:catchAll(.*)',
 		name: 'NotFound',
 		component: () => import('/src/plugins/app/views/not-found.vue')
