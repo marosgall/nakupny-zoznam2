@@ -14,8 +14,9 @@
                 </div>
             </li>
         </ul>
-        <input class="txtInput" type="text" placeholder="new item..">
+        <input class="txtInput" v-model="newListItemName" @keydown.enter="addNewItem" placeholder="new item...">
     </div>
+    <button @click="deleteList">Delete list</button>
 </template>
 
 <script>
@@ -24,24 +25,59 @@ import axios from 'axios'
 export default {
 	data() {
 		return {
-			shoppingList: null
+			shoppingList: null,
+            id: null,
+            newListItemName: ''
 		}
 	},
-
+    created() {
+        this.id = this.$route.params.id
+    },
 	async mounted() {
         try {
             const { data: { data: shoppingLists } } = await axios.get('https://shoppinglist.wezeo.dev/cms/api/v1/shopping-lists')
             this.shoppingList = shoppingLists.find(({ id }) => id == this.$route.params.id)
-            console.log(this.shoppingList);
+            // console.log(this.shoppingList.items);
             } catch (error) {
                 console.error('Error:', error)
                 this.shoppingList = { error }
         }
     },
     methods: {
+        async deleteList(id) {
+            try {
+                await axios.delete(`https://shoppinglist.wezeo.dev/cms/api/v1/shopping-lists/${this.id}`)
+                this.shoppingLists = null
+                this.$router.push({ name: 'Shopping Lists' })
+            } catch (error) {
+                console.error('Error:', error)
+            }
+        },
+        async addNewItem() {
+            try {
+				const response = await axios.post(`https://shoppinglist.wezeo.dev/cms/api/v1/shopping-lists/${this.id}/items`, {
+                    name: this.newListItemName,
+                    value: 1,
+                    unit: 'piece',
+                    is_checked: false
+				})
+                const newItem = response.data.data
 
+                if (response && response.data) {
+                this.shoppingList.items.push(newItem)
+                this.newListItemName = ''
+            }
+			} catch (error) {
+				if (error.response && error.response.status === 404) {
+                    console.error('Endpoint was not found.')
+                } else {
+                    console.error('Chyba:', error)
+                }
+			}
+		},
     }
 }
+
 </script>
 
 <style scoped>
