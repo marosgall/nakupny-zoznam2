@@ -30,7 +30,7 @@
 		</div>
 		<button @click="showNewListForm = true">Add new list</button>
         <div v-if="showNewListForm">
-            <input type="text" v-model="newListTitle" @keydown.enter="addNewList" placeholder="Enter list title">
+            <input class="txtInput whiteBackground" type="text" v-model="newListTitle" @keydown.enter="addNewList" placeholder="Enter list title">
             <!-- <button @click="addNewList">Add</button> -->
         </div>
 	</template>

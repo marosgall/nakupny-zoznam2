@@ -1,20 +1,34 @@
 <template>
     <div v-if="shoppingList" class="listDiv">
-        <h1 class="listHeading">{{ shoppingList.title }}</h1>
+        <input class="listTitleInput" type="text" v-model="shoppingList.title" @keydown.enter="editTitle(shoppingList)" maxlength="20">
         <ul>
             <li v-for="item in shoppingList.items" :key="item.id">
                 <div class="singleItem">
                     <div class="itemName">
                         <input class="checkbx" type="checkbox"
-                        :checked="item.is_checked"
+                        :checked="item.is_checked" @change="checkMe(item)"
                         >
-                        <span>{{ item.name }}</span>
+                        <span v-if="!showTitleEdit" @click="showTitleInput(item.id)">{{ item.name }}</span>
+                        <input class="txtInput" v-if="showTitleEdit === item.id" v-model="newName" @keydown.enter="editItemTitle(item)">
                     </div>
-                    <span class="itemValue">{{item.value}} {{item.unit}}</span>
+                    <span class="itemValue" @click="showValueEdit(item.id)">{{item.value}} {{item.unit}}</span>
+                    <div v-if="showEdit === item.id">
+                        <input class="valueInput" type="number" v-model.number="newValue" @keydown.enter="editItem(item)">
+                        <select class="unitInput" v-model="newUnit" @keydown.enter="editItem(item)">
+                            <option value="grams">grams</option>
+                            <option value="kilograms">kilograms</option>
+                            <option value="piece">piece</option>
+                            <option value="package">packages</option>
+                        </select>
+                    </div>
                 </div>
             </li>
+            <li>
+                <input class="txtInput addingInput" v-model="newListItemName" @keydown.enter="addNewItem" placeholder="new item..." autofocus>
+            </li>
+
         </ul>
-        <input class="txtInput" v-model="newListItemName" @keydown.enter="addNewItem" placeholder="new item...">
+        
     </div>
     <button @click="deleteList">Delete list</button>
 </template>
@@ -27,7 +41,14 @@ export default {
 		return {
 			shoppingList: null,
             id: null,
-            newListItemName: ''
+            newListItemName: '',
+            isChecked: null,
+            showEdit: null,
+            showTitleEdit: null,
+            newItemTitle: '',
+            newName: '',
+            newValue: 1,
+            newUnit: "piece"
 		}
 	},
     created() {
@@ -64,9 +85,10 @@ export default {
                 const newItem = response.data.data
 
                 if (response && response.data) {
-                this.shoppingList.items.push(newItem)
-                this.newListItemName = ''
-            }
+                    this.shoppingList.items.push(newItem)
+                    this.newListItemName = '',
+                    this.noItems = false
+                }
 			} catch (error) {
 				if (error.response && error.response.status === 404) {
                     console.error('Endpoint was not found.')
@@ -75,16 +97,79 @@ export default {
                 }
 			}
 		},
+        async checkMe(item) {
+            this.isChecked = !item.is_checked
+            try {
+                const response = await axios.put(`https://shoppinglist.wezeo.dev/cms/api/v1/shopping-lists/${this.id}/items/${item.id}`, {
+                    is_checked: this.isChecked
+                })
+                if (response.status === 200) {
+                    item.is_checked = this.isChecked
+                    // console.log(item)
+                }
+            } catch (error) {
+                if (error.response && error.response.status === 404) {
+                    console.error('Endpoint was not found.')
+                } else {
+                    console.error('Chyba:', error)
+                }
+            }
+        },
+        async editItem(item) {
+            try {
+                const response = await axios.put(`https://shoppinglist.wezeo.dev/cms/api/v1/shopping-lists/${this.id}/items/${item.id}`, {
+                    value: this.newValue,
+                    unit: this.newUnit
+                })
+                item.value = this.newValue
+                item.unit = this.newUnit
+                this.showEdit = null
+
+            } catch (error) {
+                if (error.response && error.response.status === 404) {
+                    console.error('Endpoint was not found.')
+                } else {
+                    console.error('Error:', error)
+                }
+            }
+        },
+        async editItemTitle(item) {
+            try {
+                const response = await axios.put(`https://shoppinglist.wezeo.dev/cms/api/v1/shopping-lists/${this.id}/items/${item.id}`, {
+                    name: this.newName
+                })
+                item.name = this.newName
+                this.showTitleEdit = null
+            } catch (error) {
+                if (error.response && error.response.status === 404) {
+                    console.error('Endpoint was not found.')
+                } else {
+                    console.error('Error:', error)
+                }
+            }
+        },
+        async editTitle(shoppingList) {
+            try {
+                const response = await axios.put(`https://shoppinglist.wezeo.dev/cms/api/v1/shopping-lists/${this.id}`, {
+                    title: this.shoppingList.title
+                })
+                document.querySelector('.listTitleInput').blur()
+            } catch (error) {
+                if (error.response && error.response.status === 404) {
+                    console.error('Endpoint was not found.')
+                } else {
+                    console.error('Error:', error)
+                }
+            }
+        },
+        showValueEdit(itemId) {
+            this.showEdit = itemId
+            this.showTitleEdit = null
+        },
+        showTitleInput(itemId) {
+            this.showTitleEdit = itemId
+            this.showEdit = null
+        }
     }
 }
-
 </script>
-
-<style scoped>
-    .txtInput {
-        background-color: #FFFDD1;
-        border: none;
-        position: relative;
-        right: 100px;
-    }
-</style>
