@@ -108,6 +108,13 @@ button:hover {
   background-color: lightgray;
 }
 
+.delBtn {
+  color: red;
+  padding: 2px;
+  margin-bottom: 0;
+  font-size: small;
+}
+
 .whiteBackground {
   background-color: white;
 }

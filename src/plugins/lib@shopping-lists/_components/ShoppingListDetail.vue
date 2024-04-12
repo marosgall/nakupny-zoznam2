@@ -8,18 +8,26 @@
                         <input class="checkbx" type="checkbox"
                         :checked="item.is_checked" @change="checkMe(item)"
                         >
-                        <span v-if="!showTitleEdit" @click="showTitleInput(item.id)">{{ item.name }}</span>
-                        <input class="txtInput" v-if="showTitleEdit === item.id" v-model="newName" @keydown.enter="editItemTitle(item)">
+                        <span v-if="showTitleEdit !== item.id" @click="showTitleInput(item.id)">{{ item.name }}</span>
+                        <input
+                            class="txtInput"
+                            v-if="showTitleEdit === item.id"
+                            v-model="newName"
+                            @keydown.enter="editItemTitle(item)"
+                            @keydown.esc="hideInputs(item)"
+                            :data-item-id="item.id"
+                        >
                     </div>
-                    <span class="itemValue" @click="showValueEdit(item.id)">{{item.value}} {{item.unit}}</span>
-                    <div v-if="showEdit === item.id">
-                        <input class="valueInput" type="number" v-model.number="newValue" @keydown.enter="editItem(item)">
+                    <span v-if="showEdit !== item.id" class="itemValue" @click="showValueEdit(item.id)">{{item.value}} {{item.unit}}</span>
+                    <div v-if="showEdit === item.id" @keydown.esc="hideInputs(item)">
+                        <input class="valueInput" type="number" v-model.number="newValue" @keydown.enter="editItem(item)" :data-item-id="item.id">
                         <select class="unitInput" v-model="newUnit" @keydown.enter="editItem(item)">
                             <option value="grams">grams</option>
                             <option value="kilograms">kilograms</option>
                             <option value="piece">piece</option>
                             <option value="package">packages</option>
                         </select>
+                        <button class="delBtn" @click="deleteItem(item)">Del</button>
                     </div>
                 </div>
             </li>
@@ -162,12 +170,48 @@ export default {
                 }
             }
         },
+        async deleteItem(item) {
+            try {
+                const response = await axios.delete(`https://shoppinglist.wezeo.dev/cms/api/v1/shopping-lists/${this.id}/items/${item.id}`)
+
+                if(response.status === 200) {
+                    const index = this.shoppingList.items.findIndex(i => i.id === item.id)
+                    if (index !== -1) {
+                        this.shoppingList.items.splice(index, 1)
+                    }
+                }
+            } catch (error) {
+                console.error('Error:', error)
+            }
+        },
         showValueEdit(itemId) {
             this.showEdit = itemId
+            const item = this.shoppingList.items.find(i => i.id === itemId)
+            this.newName = item ? item.name : ''
             this.showTitleEdit = null
+
+            this.$nextTick(() => {
+                const inputEl = document.querySelector(`input.valueInput[data-item-id="${itemId}"]`)
+                if (inputEl) {
+                    inputEl.focus()
+                }
+            })
         },
         showTitleInput(itemId) {
             this.showTitleEdit = itemId
+            const item = this.shoppingList.items.find(i => i.id === itemId)
+            this.newValue = item ? item.value : ''
+            this.showEdit = null
+            
+            this.$nextTick(() => {
+                const inputEl = document.querySelector(`input.txtInput[data-item-id="${itemId}"]`)
+                if (inputEl) {
+                    inputEl.focus()
+                }
+            })
+        },
+        hideInputs(item) {
+            this.showTitleEdit = null
             this.showEdit = null
         }
     }
