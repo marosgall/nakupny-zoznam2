@@ -8,19 +8,17 @@
 	</template>
 
 	<template v-else>
+		<button v-if="!showNewListForm" class="mt-2rem" @click="showNewListForm = true">Add new list</button>
+		<input v-else class="txtInput whiteBackground mt-2rem" type="text" v-model="newListTitle" @keydown.enter="addNewList" placeholder="Enter list title">
 		<div v-for="shoppingList in shoppingLists" :key="shoppingList.id" class="listDiv">
 			<a :href="`/shopping-lists/${shoppingList.id}`" @click.prevent="openShoppingListDetail(shoppingList)">
 				{{ shoppingList.title }}
 			</a>
 			<ul v-if="shoppingList.items?.length" class="itemsList">
 				<li v-for="item in shoppingList.items.slice(0, itemCount)">
-					<div v-if="item.is_checked" class="item-checked singleItem">
+					<div :class="{ 'item-checked': item.is_checked, 'singleItem': true }">
                         <span>{{ item.name }}</span>
                         <span class="itemValue">{{ item.value }} {{ item.unit }}</span>
-                    </div>
-                    <div v-else class="item-unchecked singleItem">
-                        <span>{{ item.name }}</span>
-                        <span class="itemValue">{{ item.value }} {{ item.unit }}</span>                
                     </div>
 				</li>
 				<li v-if="shoppingList.items.length > itemCount">
@@ -28,11 +26,6 @@
                 </li>
 			</ul>
 		</div>
-		<button @click="showNewListForm = true">Add new list</button>
-        <div v-if="showNewListForm">
-            <input class="txtInput whiteBackground" type="text" v-model="newListTitle" @keydown.enter="addNewList" placeholder="Enter list title">
-            <!-- <button @click="addNewList">Add</button> -->
-        </div>
 	</template>
 </template>
 
@@ -77,8 +70,6 @@
 						this.showNewListForm = false
 
 						this.$router.push({ name: 'Shopping List - Detail', params: { id: newList.id } })
-					} else {
-						console.error(error)
 					}
 				} catch (error) {
 					console.error('Error:', error)

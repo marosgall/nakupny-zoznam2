@@ -3,13 +3,17 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 const routes = [
 	{
 		path: '',
+		redirect: '/shopping-lists'
+	},
+	{
+		path: '/shopping-lists',
 		name: 'Shopping Lists',
-		component: () => import('/src/plugins/lib@shopping-lists/_components/ShoppingLists.vue')
+		component: () => import('/src/plugins/lib@shopping-lists/shopping-lists.vue')
 	},
 	{
 		path: '/shopping-list/:id',
 		name: 'Shopping List - Detail',
-		component: () => import('/src/plugins/lib@shopping-lists/_components/ShoppingListDetail.vue')
+		component: () => import('/src/plugins/lib@shopping-list-detail/shopping-list-detail.vue')
 	},
 	{
 		path: '/:catchAll(.*)',

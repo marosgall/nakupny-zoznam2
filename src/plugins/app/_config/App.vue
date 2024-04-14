@@ -1,21 +1,19 @@
 <template>
-	<div id="app">
 		<header>
-			<TheNavigation />
+			<A-navigation />
 		</header>
 
 		<main class="content">
 			<RouterView />
 		</main>
-	</div>
 </template>
 
 <script>
-  import TheNavigation from '/src/plugins/lib@shopping-lists/_components/TheNavigation.vue'
+  import ANavigation from '/src/plugins/app/_layout/a-navigation.vue'
 
   export default {
 		components: {
-			TheNavigation
+			ANavigation
 		}
 	}
 </script>

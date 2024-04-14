@@ -100,7 +100,6 @@ button {
   font-size: 1.2rem;
   font-weight: bold;
   padding: 0.25rem 0.5rem;
-  margin-bottom: 2rem;
   border-radius: 0.25rem;
 }
 
@@ -117,4 +116,12 @@ button:hover {
 
 .whiteBackground {
   background-color: white;
+}
+
+.mt-2rem {
+  margin-top: 2rem;
+}
+
+.mb-2rem {
+  margin-bottom: 2rem;
 }
