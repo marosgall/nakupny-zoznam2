@@ -10,13 +10,13 @@
 	<template v-else>
 		<button v-if="!showNewListForm" class="mt-2rem" @click="showNewListForm = true">Add new list</button>
 		<input v-else class="txtInput whiteBackground mt-2rem" type="text" v-model="newListTitle" @keydown.enter="addNewList" placeholder="Enter list title">
-		<div v-for="shoppingList in shoppingLists" :key="shoppingList.id" class="listDiv">
+		<div v-for="shoppingList in shoppingLists" class="listDiv" :key="shoppingList.id">
 			<a :href="`/shopping-lists/${shoppingList.id}`" @click.prevent="openShoppingListDetail(shoppingList)">
 				{{ shoppingList.title }}
 			</a>
 			<ul v-if="shoppingList.items?.length" class="itemsList">
 				<li v-for="item in shoppingList.items.slice(0, itemCount)">
-					<div :class="{ 'item-checked': item.is_checked, 'singleItem': true }">
+					<div class="singleItem" :class="{ 'item-checked': item.is_checked }">
                         <span>{{ item.name }}</span>
                         <span class="itemValue">{{ item.value }} {{ item.unit }}</span>
                     </div>
@@ -48,8 +48,8 @@
 			async getShoppingLists() {
 				try {
 					const { data: { data: shoppingLists} } = await axios.get('https://shoppinglist.wezeo.dev/cms/api/v1/shopping-lists')
+
 					this.shoppingLists = shoppingLists
-					console.log(shoppingLists)
 				} catch (error) {
 					console.error('Error:', error)
 					this.shoppingLists = { error }
@@ -57,20 +57,20 @@
 			},
 			async addNewList() {
 				try {
+					if (!this.newListTitle.trim().length) {
+                    	return
+                	}
 					const response = await axios.post('https://shoppinglist.wezeo.dev/cms/api/v1/shopping-lists', {
 						title: this.newListTitle,
 						items: []
 					})
 					const newList = response.data.data
-					console.log(response.data)
 
-					if (newList && newList.id) {
-						this.shoppingLists.unshift(newList)
-						this.newListTitle = ''
-						this.showNewListForm = false
+					this.shoppingLists.unshift(newList)
+					this.newListTitle = ''
+					this.showNewListForm = false
 
-						this.$router.push({ name: 'Shopping List - Detail', params: { id: newList.id } })
-					}
+					this.$router.push({ name: 'Shopping List - Detail', params: { id: newList.id } })
 				} catch (error) {
 					console.error('Error:', error)
 				}

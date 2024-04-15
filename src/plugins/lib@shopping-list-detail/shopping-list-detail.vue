@@ -15,13 +15,13 @@
                     <div class="singleItem">
                         <div class="itemName">
                             <input class="checkbx" type="checkbox"
-                            :checked="item.is_checked" @change="checkMe(item)"
+                            @change="checkMe(item)" :checked="item.is_checked"
                             >
                             <span v-if="showTitleEdit !== item.id" @click="showTitleInput(item.id)">{{ item.name }}</span>
                             <input
+                                v-else
                                 class="txtInput"
                                 :ref="`txtInput-${item.id}`"
-                                v-else
                                 v-model="newName"
                                 @keydown.enter="editItemTitle(item)"
                                 @keydown.esc="hideInputs(item)"
@@ -29,7 +29,7 @@
                             >
                         </div>
                         <span v-if="showEdit !== item.id" class="itemValue" @click="showValueEdit(item.id)">{{item.value}} {{item.unit}}</span>
-                        <div v-if="showEdit === item.id" :ref="`txtInput-${item.id}`" @keydown.esc="hideInputs(item)">
+                        <div v-else :ref="`txtInput-${item.id}`" @keydown.esc="hideInputs(item)">
                             <input class="valueInput" type="number" v-model.number="newValue" @keydown.enter="editItem(item)" :data-item-id="item.id">
                             <select class="unitInput" v-model="newUnit" @keydown.enter="editItem(item)">
                                 <option value="grams">grams</option>
@@ -46,7 +46,7 @@
                 </li>
             </ul>
         </div>
-        <button class="mb-2rem" click="deleteList">Delete list</button>
+        <button class="mb-2rem" @click="deleteList(shoppingList.id)">Delete list</button>
     </template>
 </template>
 
@@ -77,9 +77,9 @@ export default {
         }
     },
     methods: {
-        async deleteList() {
+        async deleteList(shoppingListId) {
             try {
-                await axios.delete(`https://shoppinglist.wezeo.dev/cms/api/v1/shopping-lists/${this.$route.params.id}`)
+                await axios.delete(`https://shoppinglist.wezeo.dev/cms/api/v1/shopping-lists/${shoppingListId}`)
 
                 this.shoppingList = null
                 this.$router.push({ name: 'Shopping Lists' })
@@ -89,7 +89,10 @@ export default {
         },
         async addNewItem() {
             try {
-				const response = await axios.post(`https://shoppinglist.wezeo.dev/cms/api/v1/shopping-lists/${this.$route.params.id}/items`, {
+				if (!this.newListItemName.trim().length) {
+                    return
+                }
+                const response = await axios.post(`https://shoppinglist.wezeo.dev/cms/api/v1/shopping-lists/${this.$route.params.id}/items`, {
                     name: this.newListItemName,
                     value: 1,
                     unit: 'piece',
@@ -98,10 +101,8 @@ export default {
 
                 const newItem = response.data.data
 
-                if (response && response.data) {
-                    this.shoppingList.items.push(newItem)
-                    this.newListItemName = ''
-                }
+                this.shoppingList.items.push(newItem)
+                this.newListItemName = ''
 			} catch (error) {
 				if (error.response?.status === 404) {
                     console.error('Endpoint was not found.')
@@ -147,6 +148,9 @@ export default {
         },
         async editItemTitle(item) {
             try {
+                if (!this.newName.trim().length) {
+                    return
+                }
                 const response = await axios.put(`https://shoppinglist.wezeo.dev/cms/api/v1/shopping-lists/${this.$route.params.id}/items/${item.id}`, {
                     name: this.newName
                 })
@@ -163,10 +167,13 @@ export default {
         },
         async editTitle(shoppingList) {
             try {
+                if (!this.shoppingList.title.trim().length) {
+                    return
+                }
                 const response = await axios.put(`https://shoppinglist.wezeo.dev/cms/api/v1/shopping-lists/${this.$route.params.id}`, {
                     title: this.shoppingList.title
                 })
-                
+
                 this.$refs.listTitleInput.blur()
             } catch (error) {
                 if (error.response?.status === 404) {
@@ -221,3 +228,45 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+    .listTitleInput {
+        background-color: #FFFDD1;
+        border: none;
+        border-bottom: 1px solid darkgrey;
+        text-align: center;
+        width: 100%;
+        font-size: 2em;
+        font-weight: bold;
+    }
+
+    .checkbx {
+        margin-right: 0.25rem;
+    }
+
+    .valueInput,
+    .unitInput {
+        border: none;
+        background-color: #FFFDD1;
+        border-bottom: 1px solid darkgray;
+        margin-left: 0.5rem;
+        max-width: fit-content;
+    }
+
+    .valueInput {
+        width: 2.8rem;
+    }
+
+    .delBtn {
+        color: red;
+        padding: 2px;
+        margin-bottom: 0;
+        font-size: small;
+    }
+
+    .addingInput {
+        width: 100%;
+        text-align: center;
+    }
+
+</style>

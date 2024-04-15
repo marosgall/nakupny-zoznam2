@@ -28,38 +28,10 @@ input:focus {
   outline: none;
 }
 
-.listTitleInput {
-  background-color: #FFFDD1;
-  border: none;
-  border-bottom: 1px solid darkgrey;
-  text-align: center;
-  width: 100%;
-  font-size: 2em;
-  font-weight: bold;
-}
-
 .txtInput {
   border: none;
   border-bottom: 1px solid darkgray;
   background-color: #FFFDD1;
-}
-
-.addingInput {
-  width: 100%;
-  text-align: center;
-}
-
-.valueInput,
-.unitInput {
-  border: none;
-  background-color: #FFFDD1;
-  border-bottom: 1px solid darkgray;
-  margin-left: 0.5rem;
-  max-width: fit-content;
-}
-
-.valueInput {
-  width: 2.8rem;
 }
 
 ul {
@@ -84,10 +56,6 @@ ul {
   border-bottom: 1px dotted lightgray;
 }
 
-.checkbx {
-  margin-right: 0.25rem;
-}
-
 .itemValue {
   background-color: hsla(163, 7%, 19%, 0.2);
   padding: 0 0.25rem;
@@ -105,13 +73,6 @@ button {
 
 button:hover {
   background-color: lightgray;
-}
-
-.delBtn {
-  color: red;
-  padding: 2px;
-  margin-bottom: 0;
-  font-size: small;
 }
 
 .whiteBackground {
