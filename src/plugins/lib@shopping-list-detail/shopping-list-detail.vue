@@ -29,8 +29,8 @@
                             >
                         </div>
                         <span v-if="showEdit !== item.id" class="itemValue" @click="showValueEdit(item.id)">{{item.value}} {{item.unit}}</span>
-                        <div v-else :ref="`txtInput-${item.id}`" @keydown.esc="hideInputs(item)">
-                            <input class="valueInput" type="number" v-model.number="newValue" @keydown.enter="editItem(item)" :data-item-id="item.id">
+                        <div v-else @keydown.esc="hideInputs(item)">
+                            <input class="valueInput" :ref="`valueInput-${item.id}`" type="number" v-model.number="newValue" @keydown.enter="editItem(item)" :data-item-id="item.id">
                             <select class="unitInput" v-model="newUnit" @keydown.enter="editItem(item)">
                                 <option value="grams">grams</option>
                                 <option value="kilograms">kilograms</option>
@@ -198,26 +198,26 @@ export default {
         showValueEdit(itemId) {
             this.showEdit = itemId
             const item = this.shoppingList.items.find(i => i.id === itemId)
-            this.newName = item ? item.name : ''
+            this.newValue = item ? item.value : ''
             this.showTitleEdit = null
 
             this.$nextTick(() => {
                 const inputEl = this.$refs[`valueInput-${itemId}`]
                 if (inputEl) {
-                    inputEl.focus()
+                    inputEl[0].focus()
                 }
             })
         },
         showTitleInput(itemId) {
             this.showTitleEdit = itemId
             const item = this.shoppingList.items.find(i => i.id === itemId)
-            this.newValue = item ? item.value : ''
+            this.newName = item ? item.name : ''
             this.showEdit = null
             
             this.$nextTick(() => {
                 const inputEl = this.$refs[`txtInput-${itemId}`]
                 if (inputEl) {
-                    inputEl.focus()
+                    inputEl[0].focus()
                 }
             })
         },
