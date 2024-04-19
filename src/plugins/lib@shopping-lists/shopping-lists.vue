@@ -8,15 +8,15 @@
 	</template>
 
 	<template v-else>
-		<button v-if="!showNewListForm" class="mt-2rem" @click="showNewListForm = true">Add new list</button>
-		<input v-else class="txtInput whiteBackground mt-2rem" type="text" v-model="newListTitle" @keydown.enter="addNewList" placeholder="Enter list title">
-		<div v-for="shoppingList in shoppingLists" class="listDiv" :key="shoppingList.id">
+		<button v-if="!showNewListForm" @click="showNewListForm = true" class="mt-2rem">Add new list</button>
+		<input v-else v-model="newListTitle" @keydown.enter="addNewList" class="txtInput whiteBackground mt-2rem" type="text" placeholder="Enter list title">
+		<div v-for="shoppingList in shoppingLists" :key="shoppingList.id" class="listDiv">
 			<a :href="`/shopping-lists/${shoppingList.id}`" @click.prevent="openShoppingListDetail(shoppingList)">
 				{{ shoppingList.title }}
 			</a>
 			<ul v-if="shoppingList.items?.length" class="itemsList">
 				<li v-for="item in shoppingList.items.slice(0, itemCount)">
-					<div class="singleItem" :class="{ 'item-checked': item.is_checked }">
+					<div :class="{ 'item-checked': item.is_checked }" class="singleItem">
                         <span>{{ item.name }}</span>
                         <span class="itemValue">{{ item.value }} {{ item.unit }}</span>
                     </div>

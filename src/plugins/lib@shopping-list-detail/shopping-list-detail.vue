@@ -9,44 +9,50 @@
 
     <template v-else>
         <div v-if="shoppingList" class="listDiv">
-            <input class="listTitleInput" ref="listTitleInput" type="text" v-model="shoppingList.title" @keydown.enter="editTitle(shoppingList)" maxlength="20">
+            <input v-model="shoppingList.title" @keydown.enter="editTitle(shoppingList)" class="listTitleInput" ref="listTitleInput" type="text" maxlength="20">
             <ul>
                 <li v-for="item in shoppingList.items" :key="item.id">
                     <div class="singleItem">
                         <div class="itemName">
-                            <input class="checkbx" type="checkbox"
-                            @change="checkMe(item)" :checked="item.is_checked"
-                            >
+                            <input @change="checkMe(item)" :checked="item.is_checked" class="checkbx" type="checkbox">
                             <span v-if="showTitleEdit !== item.id" @click="showTitleInput(item.id)">{{ item.name }}</span>
                             <input
                                 v-else
-                                class="txtInput"
-                                :ref="`txtInput-${item.id}`"
                                 v-model="newName"
+                                :ref="`txtInput-${item.id}`"
+                                :data-item-id="item.id"
                                 @keydown.enter="editItemTitle(item)"
                                 @keydown.esc="hideInputs(item)"
-                                :data-item-id="item.id"
+                                class="txtInput"
                             >
                         </div>
-                        <span v-if="showEdit !== item.id" class="itemValue" @click="showValueEdit(item.id)">{{item.value}} {{item.unit}}</span>
+                        <span v-if="showEdit !== item.id" @click="showValueEdit(item.id)" class="itemValue">
+                            {{item.value}} {{item.unit}}
+                        </span>
                         <div v-else @keydown.esc="hideInputs(item)">
-                            <input class="valueInput" :ref="`valueInput-${item.id}`" type="number" v-model.number="newValue" @keydown.enter="editItem(item)" :data-item-id="item.id">
-                            <select class="unitInput" v-model="newUnit" @keydown.enter="editItem(item)">
+                            <input
+                                v-model.number="newValue"
+                                :ref="`valueInput-${item.id}`"
+                                :data-item-id="item.id"
+                                @keydown.enter="editItem(item)" 
+                                class="valueInput" type="number"
+                            >
+                            <select v-model="newUnit" @keydown.enter="editItem(item)" class="unitInput">
                                 <option value="grams">grams</option>
                                 <option value="kilograms">kilograms</option>
                                 <option value="piece">piece</option>
                                 <option value="package">packages</option>
                             </select>
-                            <button class="delBtn" @click="deleteItem(item)">Del</button>
+                            <button @click="deleteItem(item)" class="delBtn">Del</button>
                         </div>
                     </div>
                 </li>
                 <li>
-                    <input class="txtInput addingInput" v-model="newListItemName" @keydown.enter="addNewItem" placeholder="new item..." autofocus>
+                    <input v-model="newListItemName" @keydown.enter="addNewItem" class="txtInput addingInput" placeholder="new item..." autofocus>
                 </li>
             </ul>
         </div>
-        <button class="mb-2rem" @click="deleteList(shoppingList.id)">Delete list</button>
+        <button @click="deleteList(shoppingList.id)" class="mb-2rem">Delete list</button>
     </template>
 </template>
 
